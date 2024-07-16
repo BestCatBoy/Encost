@@ -107,7 +107,7 @@ class file:
         if not len(data):
             raise ValueError("data cannot be empty")
 
-        data_len_set = set([len(line) for line in data])
+        data_len_set = list(set([len(line) for line in data]))
 
         if len(data_len_set) != 1:
             raise ValueError(
