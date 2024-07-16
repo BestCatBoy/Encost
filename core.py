@@ -61,7 +61,7 @@ class file:
         """
         Add data to the end of the file:
 
-            f = file('filename.txt', 10)
+            f = file('filename.txt', line_sizes)
             f.add_data(["1234567890", "0123456789"])
         """
 
