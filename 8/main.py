@@ -16,6 +16,7 @@ def main():
 
     new_group = "Цех №2"
 
+
     ## working with database
     name = client(database_name)
 
