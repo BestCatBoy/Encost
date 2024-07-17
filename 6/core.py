@@ -9,9 +9,8 @@ class file:
     __charset: const['str'] = 'utf-8'
 
     def __new__(cls, *args, **kwargs):
-        """
-        singleton pattern
-        """
+
+        """ singleton pattern """
 
         if cls.__entity is None:
             cls.__entity = super().__new__(cls)
@@ -19,11 +18,8 @@ class file:
         return cls.__entity
 
     def __init__(self, file_name, line_size):
-        """
-        initialize the file object:
 
-            f = file('filename.txt', line_size)
-        """
+        """ initialize the file object """
 
         self.__verify_file(file_name)
 
@@ -32,15 +28,14 @@ class file:
         self.__line_size = line_size
 
     def get_data(self, *args) -> str:
-        """
-        get data from a file:
+
+        """ # get data from a file:
 
             f = file('filename.txt', line_size)
 
             all_data = f.get_data()                 # return all data
             line_1_data = f.get_data(a)             # return line number a
-            lines_0_10_data = f.get_data(a, b)      # return all lines in the range from a to b
-        """
+            lines_0_10_data = f.get_data(a, b)      # return all lines in the range from a to b """
 
         interval = list(args)
         self.__verify_interval(interval)
@@ -58,12 +53,11 @@ class file:
         return lines[args[0]*offset:args[len(args)-1]*offset+offset*(len(args)%2)]
 
     def add_data(self, data):
-        """
-        Add data to the end of the file:
+
+        """ # add data to the end of the file:
 
             f = file('filename.txt', line_sizes)
-            f.add_data(["1234567890", "0123456789"])
-        """
+            f.add_data(["1234567890", "0123456789"]) """
 
         self.__verify_data(data, self.__line_size)
 
@@ -77,9 +71,8 @@ class file:
 
     @classmethod
     def __verify_file(cls, file_name):
-        """
-        verify the file for suitability for initialization
-        """
+
+        """ verify the file for suitability for initialization """
 
         if not isinstance(file_name, str):
             raise TypeError(
@@ -95,9 +88,8 @@ class file:
 
     @classmethod
     def __verify_data(cls, data, line_size):
-        """
-        verify data for suitability for writing to file
-        """
+
+        """ verify data for suitability for writing to file """
 
         if not hasattr(data, '__iter__'):
             raise TypeError(
@@ -121,9 +113,8 @@ class file:
 
     @classmethod
     def __verify_interval(cls, interval):
-        """
-        verify interval for suitability for receiving data
-        """
+
+        """ verify interval for suitability for receiving data """
 
         if not hasattr(interval, '__iter__'):
             raise TypeError(

@@ -1,57 +1,40 @@
-import sqlite3
-
-def get_last_id(table: str) -> int:
-    """
-
-    """
-
-    with sqlite3.connect('client.sqlite') as db:
-        cursor = db.cursor()
-
-        sql = f"SELECT id FROM {table} ORDER BY id DESC LIMIT 1"
-        cursor.execute(sql)
-        last_id = cursor.fetchall()[0][0]
-
-        return last_id
-
-def add_data(table: str, data):
-    """
-
-    """
-
-    column_count = {
-        'endpoints':            3,
-        'endpoint_reasons':     4,
-        'endpoint_groups':      3
-    }
-
-    with sqlite3.connect('client.sqlite') as db:
-        cursor = db.cursor()
-
-        sql = f"INSERT INTO {table} VALUES({('?,'*column_count[table])[:-1]})"
-        id = get_last_id(table) + 1
-
-        cursor.execute(sql, [id] + data)
-
-"""
-2.1) получить три массива с причинами (3, 4 столбцы) по станкам:
-    "Фрезерный станок", "Старый ЧПУ", "Сварка"
-2.3) добавить эти причины по каждому новому соответствующему id станка
-
-3.1) добавить "Цех №2" в endpoint_groups и поместить туда новые станки
-
-4.1) добавить станки 4 и 5 к новой группе
-"""
+from core import client
 
 def main():
-    data = [
-        ["Сварочный аппарат №1",    "true"],
-        ["Пильный аппарат №2",      "true"],
-        ["Фрезер №3",               "true"]
+
+    ## config
+    database_name = 'client.sqlite'
+
+    endpoints_table = 'endpoints'
+    endpoint_reasons_table = 'endpoint_reasons'
+
+    active = 'true'
+
+    old_endpoints = ["Фрезерный станок", "Старый ЧПУ", "Сварка"]
+    new_endpoints = ["Сварочный аппарат №1", "Пильный аппарат №2", "Фрезер №3"]
+    old_endpoints_for_adding = ["Пильный станок", "Старый ЧПУ"]
+
+    new_group = "Цех №2"
+
+    ## working with database
+    name = client(database_name)
+
+    for endpoint in new_endpoints:
+        name.add_data(endpoints_table, [endpoint] + [active])
+
+    old_endpoints_reasons = list(map(name.get_reasons, old_endpoints))
+    format_config = name.get_format_config(old_endpoints, new_endpoints)
+    new_endpoints_reasons = [
+        client.format_id(endpoint, format_config)
+        for endpoint in old_endpoints_reasons
     ]
 
-    for line in data:
-        add_data('endpoints', line)
+    for new_endpoints_reason in new_endpoints_reasons:
+        for endpoint in new_endpoints_reason:
+            name.add_data(endpoint_reasons_table, endpoint)
+
+    name.add_group(new_endpoints, new_group)
+    name.add_group(old_endpoints_for_adding, new_group)
 
 if __name__ == '__main__':
     main()
